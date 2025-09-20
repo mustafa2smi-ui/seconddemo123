@@ -14,6 +14,6 @@ window.POSTS = [
     "date":"2025-09-18",
     "excerpt":"Intro post — site live and audio-ready.",
     "image":"/images/welcome.jpg",
-    "path":"/posts/micnews-welcome.html"
+    "path":"/posts/post2.html"
   }
 ];
