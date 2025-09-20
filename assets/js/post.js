@@ -6,7 +6,7 @@ window.POSTS = [
     "date":"2025-09-20",
     "excerpt":"Quick guide to push repo and connect to Netlify.",
     "image":"/images/deploy.jpg",
-    "path":"/posts/how-to-deploy-github-netlify.html"
+    "path":"/posts/post1.html"
   },
   {
     "slug":"micnews-welcome",
