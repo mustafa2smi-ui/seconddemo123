@@ -1,18 +1,21 @@
-
 // assets/js/main.js
+
 const PAGE_SIZE = 5; // change to 3 if you want
 let currentPage = 1;
 const postsListEl = document.getElementById('posts-list');
 const prevBtn = document.getElementById('prev-btn');
 const nextBtn = document.getElementById('next-btn');
 const showMoreBtn = document.getElementById('show-more-btn');
+const postContentEl = document.getElementById('postContent');
+const audioPlayer = document.getElementById("audioPlayer");
 
+// ---------------- Render Posts ----------------
 function renderPosts(page=1, append=false){
   const start = (page-1)*PAGE_SIZE;
   const slice = window.POSTS.slice(start, start+PAGE_SIZE);
   const html = slice.map(p => `
     <article class="post-card">
-      <a href="${p.path}" class="post-link">
+      <a href="javascript:void(0)" onclick="loadPost('${p.path}')">
         <img loading="lazy" src="${p.image}" alt="${p.title}">
         <h3>${p.title}</h3>
         <p class="excerpt">${p.excerpt}</p>
@@ -20,7 +23,6 @@ function renderPosts(page=1, append=false){
       </a>
       <div class="card-actions">
         <button onclick='shareUrl("${p.path}", "${p.title}")'>Share</button>
-        <button onclick='triggerTTSForPath("${p.path}")'>Play</button>
       </div>
     </article>`).join('');
   if(append) postsListEl.insertAdjacentHTML('beforeend', html);
@@ -34,11 +36,25 @@ function updateNav(){
   nextBtn.disabled = currentPage >= totalPages;
 }
 
-prevBtn.addEventListener('click', ()=>{ if(currentPage>1){ currentPage--; renderPosts(currentPage); }});
-nextBtn.addEventListener('click', ()=>{ const totalPages=Math.ceil(window.POSTS.length/PAGE_SIZE); if(currentPage<totalPages){ currentPage++; renderPosts(currentPage); }});
-showMoreBtn.addEventListener('click', ()=>{ currentPage++; renderPosts(currentPage, true); });
+prevBtn.addEventListener('click', ()=>{
+  if(currentPage>1){
+    currentPage--;
+    renderPosts(currentPage);
+  }
+});
+nextBtn.addEventListener('click', ()=>{
+  const totalPages=Math.ceil(window.POSTS.length/PAGE_SIZE);
+  if(currentPage<totalPages){
+    currentPage++;
+    renderPosts(currentPage);
+  }
+});
+showMoreBtn.addEventListener('click', ()=>{
+  currentPage++;
+  renderPosts(currentPage, true);
+});
 
-// share function
+// ---------------- Share ----------------
 async function shareUrl(url, title){
   const full = location.origin + url;
   if(navigator.share){
@@ -46,68 +62,59 @@ async function shareUrl(url, title){
       await navigator.share({title, url: full});
     }catch(e){ console.log('Share cancelled', e); }
   } else {
-    // fallback copy
     try {
       await navigator.clipboard.writeText(full);
-      alert('Link copied to clipboard');
+      alert('✅ Link copied to clipboard');
     } catch (err) {
       prompt('Copy this link:', full);
     }
   }
 }
 
-// Trigger site-wide TTS by reading remote post (fetch and read)
-async function triggerTTSForPath(path){
-  try{
-    const res = await fetch(path);
-    const html = await res.text();
-    // simple extraction: grab <article id="article"> or body text fallback
-    const tmp = document.createElement('div'); tmp.innerHTML = html;
-    const article = tmp.querySelector('#article') || tmp.querySelector('article') || tmp.querySelector('main') || tmp;
-    const text = (article && article.innerText) ? (tmp.querySelector('h1')?.innerText || '') + "\n" + article.innerText : tmp.innerText;
-    window.TTS && window.TTS.speak(text);
-  }catch(e){ console.error(e); alert('Failed to fetch post for audio.'); }
+// ---------------- Audio Player ----------------
+function tryPlayAudio() {
+  if (!audioPlayer.src || audioPlayer.src.trim() === "") {
+    alert("⚠️ First Select Post\n\n👉 Please open a post before playing audio.");
+    return;
+  }
+  audioPlayer.play();
 }
 
-// Request notification permission (simple)
+// ---------------- Load Post ----------------
+function loadPost(postFile) {
+  fetch(postFile)
+    .then(response => response.text())
+    .then(data => {
+      postContentEl.innerHTML = data;
+
+      // Extract text for TTS
+      const text = postContentEl.innerText.trim();
+      if(text){
+        const audioUrl = generateTTS(text); // from tts.js
+        audioPlayer.src = audioUrl;
+      }
+      window.scrollTo({ top: postContentEl.offsetTop - 20, behavior: 'smooth' });
+
+      console.log("✅ Post loaded + audio ready");
+    })
+    .catch(err => {
+      console.error(err);
+      alert("❌ Failed to load post");
+    });
+}
+
+// ---------------- Notification ----------------
 async function askNotifyPermission(){
   if(!("Notification" in window)) return;
   if(Notification.permission === 'default') await Notification.requestPermission();
 }
 askNotifyPermission();
 
-// show simple notification while user is on site
 function showLocalNotification(title, body){
   if(Notification.permission === 'granted'){
     new Notification(title, { body, icon: '/favicon.ico' });
   }
 }
-// Audio Player Reference
-const audioPlayer = document.getElementById("audioPlayer");
 
-// Play attempt check
-function tryPlayAudio() {
-  if (!audioPlayer.src || audioPlayer.src.trim() === "") {
-    alert("⚠️ First Select Post");
-    return;
-  }
-  audioPlayer.play();
-}
-
-// Post load hone par audio set karo
-function loadPost(postFile) {
-  fetch(postFile)
-    .then(response => response.text())
-    .then(data => {
-      document.getElementById("postContent").innerHTML = data;
-
-      // Example: Post ka text audio ke liye set karo
-      const text = document.getElementById("postContent").innerText;
-      const audioUrl = generateTTS(text); // tts.js function
-      audioPlayer.src = audioUrl;
-
-      console.log("✅ Post loaded + audio ready");
-    });
-}
-// init
+// ---------------- Init ----------------
 renderPosts(1);
