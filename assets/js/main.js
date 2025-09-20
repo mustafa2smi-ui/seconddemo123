@@ -1,3 +1,8 @@
+// diagnostic: show visible error if POSTS missing or empty
+if(!window.POSTS || !Array.isArray(window.POSTS) || window.POSTS.length===0){
+  document.body.insertAdjacentHTML('afterbegin',
+    '<div style="background:#ffdddd;color:#900;padding:10px;text-align:center;">Debug: No posts found (check /assets/js/posts.js and script order).</div>');
+}
 // assets/js/main.js
 const PAGE_SIZE = 5; // change to 3 if you want
 let currentPage = 1;
