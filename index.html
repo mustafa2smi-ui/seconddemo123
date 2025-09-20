@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="hi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>MicNews123</title>
+  <link rel="icon" href="/favicon.ico" />
+  <link rel="stylesheet" href="/assets/css/style.css" />
+</head>
+<body>
+  <header class="navbar">
+    <div class="brand">MicNews123</div>
+    <nav class="menu">
+      <a href="/">Home</a>
+      <a href="/about.html">About</a>
+      <a href="/privacy.html">Privacy</a>
+      <a href="/contact.html">Contact</a>
+    </nav>
+    <div class="controls">
+      <button id="global-tts-btn" title="Audio">🔊</button>
+      <button id="share-btn" title="Share">Share</button>
+    </div>
+  </header>
+
+  <main>
+    <section id="hero"> <!-- Hero content --> </section>
+
+    <section id="posts-list"></section>
+
+    <div class="pagination">
+      <button id="prev-btn">Previous</button>
+      <button id="show-more-btn">Show More</button>
+      <button id="next-btn">Next</button>
+    </div>
+
+    <!-- Side-scroll cards -->
+    <aside class="side-scroll" id="side-scroll">
+      <div class="cards">
+        <a href="#" class="card"><img loading="lazy" src="/images/ad1.jpg"><p>Promo 1</p></a>
+        <a href="#" class="card"><img loading="lazy" src="/images/ad2.jpg"><p>Promo 2</p></a>
+      </div>
+    </aside>
+  </main>
+
+  <footer>
+    <div class="footer-links">About · Privacy · Disclaimer</div>
+    <div class="footer-cta">Subscribe to MicNews123</div>
+    <div class="footer-note">© MicNews123</div>
+  </footer>
+
+  <script src="/assets/js/posts.js"></script>
+  <script src="/assets/js/main.js"></script>
+  <script src="/assets/js/tts.js"></script>
+</body>
+</html>
