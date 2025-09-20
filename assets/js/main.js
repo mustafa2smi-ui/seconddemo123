@@ -81,6 +81,32 @@ function showLocalNotification(title, body){
     new Notification(title, { body, icon: '/favicon.ico' });
   }
 }
+// Audio Player Reference
+const audioPlayer = document.getElementById("audioPlayer");
 
+// Play attempt check
+function tryPlayAudio() {
+  if (!audioPlayer.src || audioPlayer.src.trim() === "") {
+    alert("⚠️ First Select Post");
+    return;
+  }
+  audioPlayer.play();
+}
+
+// Post load hone par audio set karo
+function loadPost(postFile) {
+  fetch(postFile)
+    .then(response => response.text())
+    .then(data => {
+      document.getElementById("postContent").innerHTML = data;
+
+      // Example: Post ka text audio ke liye set karo
+      const text = document.getElementById("postContent").innerText;
+      const audioUrl = generateTTS(text); // tts.js function
+      audioPlayer.src = audioUrl;
+
+      console.log("✅ Post loaded + audio ready");
+    });
+}
 // init
 renderPosts(1);
