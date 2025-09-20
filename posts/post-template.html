@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="hi">
+<head>
+  <meta charset="utf-8">
+  <title>POST TITLE • MicNews123</title>
+  <meta name="description" content="SHORT EXCERPT HERE">
+  <!-- Open Graph for social preview -->
+  <meta property="og:title" content="POST TITLE">
+  <meta property="og:description" content="SHORT EXCERPT HERE">
+  <meta property="og:image" content="/images/post-image.jpg">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://yourdomain.com/posts/slug.html">
+  <link rel="icon" href="/favicon.ico">
+  <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body>
+  <header class="navbar"> ... same as index ... </header>
+
+  <main id="article" class="post-article">
+    <h1>POST TITLE</h1>
+    <time>2025-09-20</time>
+    <img src="/images/post-image.jpg" alt="">
+    <p>Full content — write here. Use paragraphs. The global TTS script will read content of #article.</p>
+  </main>
+
+  <footer> ... </footer>
+
+  <script src="/assets/js/tts.js"></script>
+  <script>
+    // attach local share button if needed
+    document.getElementById('share-btn')?.addEventListener('click', ()=> {
+      const url = location.href;
+      const title = document.querySelector('h1')?.innerText || document.title;
+      if(navigator.share) navigator.share({title, url});
+      else navigator.clipboard.writeText(url).then(()=> alert('Link copied'));
+    });
+
+    // If you want the audio to auto-load content:
+    document.getElementById('global-tts-btn')?.addEventListener('click', ()=>{
+      const text = (document.getElementById('article')?.innerText) || '';
+      window.TTS && window.TTS.speak(text);
+    });
+  </script>
+</body>
+</html>
